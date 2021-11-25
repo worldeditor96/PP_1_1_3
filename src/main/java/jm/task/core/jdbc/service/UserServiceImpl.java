@@ -10,30 +10,50 @@ import java.util.List;
 
 public class UserServiceImpl extends Util implements UserService {
 
+    public boolean tableExist(Connection conn, String tableName) throws SQLException {
+        boolean tExists = false;
+        try (ResultSet rs = conn.getMetaData().getTables(null, null, tableName, null)) {
+            while (rs.next()) {
+                String tName = rs.getString("TABLE_NAME");
+                if (tName != null && tName.equals(tableName)) {
+                    tExists = true;
+                    break;
+                }
+            }
+        }
+        return tExists;
+    }
+
     public void createUsersTable() throws SQLException {
         Connection connection = getConnection();
         PreparedStatement preparedStatement = null;
+        if (tableExist(connection, "User")==false) {
+            String sql = "CREATE TABLE IF NOT EXISTS User (id MEDIUMINT NOT NULL AUTO_INCREMENT, name VARCHAR (30) NOT NULL, lastName VARCHAR (30) NOT NULL, age MEDIUMINT, PRIMARY KEY (id))";
+            try {
+                preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.executeUpdate();
 
-        String sql = "CREATE TABLE IF NOT EXISTS User (id MEDIUMINT NOT NULL AUTO_INCREMENT, name VARCHAR (30) NOT NULL, lastName VARCHAR (30) NOT NULL, age MEDIUMINT, PRIMARY KEY (id))";
-        try {
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (preparedStatement != null) {
-                preparedStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
             }
-            if (connection != null) {
-                connection.close();
-            }
+        } else {
+            System.out.println("Table is exist");
         }
     }
 
 
     public void dropUsersTable() throws SQLException {
+
         Connection connection = getConnection();
+        if (tableExist(connection, "User")==true){
+
         PreparedStatement preparedStatement = null;
 
         String sql = "DROP TABLE User";
@@ -51,6 +71,10 @@ public class UserServiceImpl extends Util implements UserService {
                 connection.close();
             }
         }
+        } else {
+            System.out.println("table is not exist");
+        }
+
     }
 
     public void saveUser(String name, String lastName, byte age) throws SQLException {
@@ -86,7 +110,7 @@ public class UserServiceImpl extends Util implements UserService {
         String sql = "DElETE FROM User WHERE id=?";
         try {
             preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, "id");
+            preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
