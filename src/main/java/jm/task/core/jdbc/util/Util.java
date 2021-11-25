@@ -7,11 +7,12 @@ import java.sql.Statement;
 
 public class Util {
     // реализуйте настройку соеденения с БД
-    private final String username="Max";
-    private final String password="1111";
-    private final String conectionURL="jdbc:mysql://localhost:3306/schema_1_1_3";
+    private static final String username="Max";
+    private static final String password="1111";
+    private static final String conectionURL="jdbc:mysql://localhost:3306/schema_1_1_3";
 
-    public Connection getConnection () {
+
+    public static Connection getConnection () {
 
         Connection connection=null;
 
