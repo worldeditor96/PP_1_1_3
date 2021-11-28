@@ -9,7 +9,7 @@ import java.sql.*;
 public class Main {
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
 
-        UserServiceImpl userServiceImpl=new UserServiceImpl();
+        UserService userServiceImpl=new UserServiceImpl();
 
         userServiceImpl.createUsersTable();
         userServiceImpl.saveUser("Valli", "Kotikov", (byte) 45);
@@ -17,8 +17,10 @@ public class Main {
         userServiceImpl.saveUser("Maxim", "Penza", (byte) 543);
         userServiceImpl.saveUser("Kod", "Jonson", (byte) 34);
         System.out.println(userServiceImpl.getAllUsers());
+        System.out.println(userServiceImpl.getAllUsers().size());
         userServiceImpl.cleanUsersTable();
         userServiceImpl.dropUsersTable();
+
 
     }
 }
